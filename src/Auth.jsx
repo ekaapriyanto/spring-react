@@ -7,6 +7,7 @@ class Auth extends React.Component {
   state = {
     username: "",
     password: "",
+    selectedFile: null,
   };
 
   inputHandler = (event, key) => {
@@ -47,6 +48,33 @@ class Auth extends React.Component {
       });
   };
 
+  fileChangeHandler = (e) => {
+    this.setState({ selectedFile: e.target.files[0] });
+  };
+
+  fileUploadHandler = () => {
+    let formData = new FormData();
+
+    formData.append(
+      "file",
+      this.state.selectedFile,
+      this.state.selectedFile.name
+    );
+
+    Axios.post(`${API_URL}/documents`, formData)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log("ERROR");
+        console.log(err);
+      });
+  };
+
+  download = () => {
+    window.open(`${API_URL}/documents/download/tower.png`);
+  };
+
   render() {
     return (
       <div>
@@ -61,6 +89,11 @@ class Auth extends React.Component {
 
         <input type="button" value="Login" onClick={this.loginHandler} />
         <input type="button" value="Register" onClick={this.registerHandler} />
+        <br />
+        <input type="file" onChange={this.fileChangeHandler} />
+        <input type="button" value="Upload" onClick={this.fileUploadHandler} />
+        <br />
+        <input type="button" value="Download" onClick={this.download} />
       </div>
     );
   }
